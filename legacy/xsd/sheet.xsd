@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+ <!--
+ UBUC recognises a few status's of their equipment
+ -->
+
+    <xs:simpleType name="LogMessageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="working"/> <!-- Item is working -->
+            <xs:enumeration value="broken"/>  <!-- Item cannot be used -->
+            <xs:enumeration value="damaged"/> <!-- Item can be used with care/in limited circumstances -->
+			<xs:enumeration value="niggle"/>  <!-- Item has an issue that should be fixed -->
+            <xs:enumeration value="missing"/> <!-- Item is missing -->
+			<xs:enumeration value="decomissioned"/> <!-- Item is no longer in use -->
+
+         </xs:restriction>
+     </xs:simpleType>
+
+    <xs:element name="Worksheet">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="Row">
+                    <xs:complexType> 
+                        <xs:sequence>
+                           <xs:element name="name"/>
+                           <xs:element name="id"/>
+                           <xs:element name="status"/>
+						   <xs:element name="officers"/>
+						   <xs:element name="otherattributes"/>
+						</xs:sequence>
+                </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

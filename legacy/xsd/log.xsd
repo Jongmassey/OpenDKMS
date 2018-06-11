@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+ <!--
+ UBUC recognises a few status's of their equipment
+ -->
+
+    <xs:simpleType name="LogMessageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="working"/> <!-- Item is working -->
+            <xs:enumeration value="broken"/>  <!-- Item cannot be used -->
+            <xs:enumeration value="damaged"/> <!-- Item can be used with care/in limited circumstances -->
+			<xs:enumeration value="niggle"/>  <!-- Item has an issue that should be fixed -->
+            <xs:enumeration value="missing"/> <!-- Item is missing -->
+			<xs:enumeration value="decomissioned"/> <!-- Item is no longer in use -->
+
+<!-- Log comments relating to other attributes -->
+            <xs:enumeration value="image"/>   <!-- an image is being provided -->
+			<xs:enumeration value="estimate"/> <!-- Cost of doing a procedure is being provided -->
+			<xs:enumeration value="valuation"/> <!-- Current valuation of item is being provided -->
+			<xs:enumeration value="quote"/> <!-- Cost of a single new replacement -->
+			<xs:enumeration value="purchase"/> <!-- Money actually paid to a supplier -->
+
+         </xs:restriction>
+     </xs:simpleType>
+
+    <xs:element name="logfile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="logentry">
+                    <xs:complexType> 
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                            <xs:attribute name="date" use="required"/>
+                            <xs:attribute name="name" use="required"/>
+                            <xs:attribute name="id"/>
+                            <xs:attribute name="commenttype" type="LogMessageType" use="optional"/>
+                            <xs:attribute name="procedure"/>
+                            <xs:attribute name="price" type="xs:decimal"/>
+                            <xs:attribute name="uri"/>
+                            <xs:attribute name="supplier"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

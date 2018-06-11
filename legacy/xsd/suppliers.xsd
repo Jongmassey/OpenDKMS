@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+  
+<!--
+The suppliers to UBUC of all parts/tools/items/consumables etc
+-->    
+    <xs:complexType name="supplierType">
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="email"/>
+        <xs:attribute name="uri"/>
+        <xs:attribute name="tel"/>
+        <xs:attribute name="postcode"/>
+		<xs:attribute name="closed" type="xs:date"/>
+    </xs:complexType>
+
+    <xs:element name="suppliers">
+    <xs:complexType>
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="supplier" type="supplierType"/>
+        </xs:sequence>
+    </xs:complexType>
+    </xs:element>
+
+</xs:schema>

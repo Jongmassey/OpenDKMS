@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!-- Created By Tim Walsh
+     2012-10-12
+     
+     
+     This mananual has a number of collections, these are recursive so a collection can contain other collectiions.
+     Within a collection are items which may contain components
+     
+     collections, items and components may contain procedures which have a series of steps
+     these contain partref, toolref and consumableref which are references to 
+     partbit
+     tools
+     consumable 
+     
+     refid is a reference and may appear anywhere
+     
+     ref contains the details of the referenced document
+     
+     supplier contains details of suppliers
+      -->
+  
+ <xs:simpleType name="NameType">
+  <xs:restriction base="xs:string">
+    <xs:maxLength value="21"/>
+  </xs:restriction>
+</xs:simpleType>
+      
+    <xs:attributeGroup name="BasicRecord">
+        <xs:attribute name="id" type="xs:ID" use="required"/>
+        <xs:attribute name="name" use="required" type="NameType"/>
+	</xs:attributeGroup>
+<!--
+ The manual will highlight text if it relates to an action that
+ may be risky for the person doing it or if it may cause 
+ damage to a UBUC item
+ -->
+    <xs:simpleType name="warningLevel">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="danger"/>
+            <xs:enumeration value="damage"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="warningAtribute">
+        <xs:attribute name="type" type="warningLevel" use="required"/>
+    </xs:complexType>
+
+<!-- TBD Test Warning-->
+
+ <!--
+Parts in the manual are required to have an id and name.  If spares ougth to 
+be kept in the stores then this is marked using the spares attribute.  Other
+attributes may be added to better describe aspects of the part.
+
+A part may be associated with a reference list pointing the reader to more
+documentation about the part
+-->
+    <!--xs:complexType name="partTypeAttributes">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="store" type="xs:boolean"/>
+        <xs:anyAttribute processContents="skip"/>
+    </xs:complexType -->
+
+  <xs:complexType name="partTypeAttributes">
+        <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="store" type="xs:boolean" use="required"/>
+        <xs:anyAttribute processContents="skip"/>
+    
+    </xs:complexType>
+
+    <xs:complexType name="partType">
+        <xs:complexContent>
+            <xs:extension base="partTypeAttributes">
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="refid" type="referenceLink"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="partsList">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="partbit" type="partType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+ <!-- 
+When a part is referenced the id must be supplied but the number 
+of parts that will require placement at that point may also be specified
+-->   
+    <xs:complexType name="partRefType">
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="number"/>
+    </xs:complexType>
+
+
+
+<!-- 
+The UBUC manual is intended to give student committees step by step 
+instructions on the actions required and things needed to maintain 
+UBUC's equipment.  The actions are gathered into procedures that must be 
+actioned on a regular base and steps which contain text and references
+to direct the reader to relevant documentation
+-->
+    <xs:complexType mixed="true" name="stepInstructions">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:choice>
+			    <xs:element name="procref" type="procRefType"/>
+                <xs:element name="partref" type="partRefType"/>
+                <xs:element name="refid" type="referenceLink"/>
+                <xs:element name="warning"></xs:element>
+                <xs:element name="toolref" type="toolLink"/>
+                <xs:element name="consumableref" type="consumableLink"/>
+                <!--xs:element name="warning" type="warningLevel"></xs:element-->
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="stepType">
+        <xs:complexContent>
+            <xs:extension base="stepInstructions">
+                <xs:attribute name="name" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+  
+      <xs:simpleType name="procedureLevel">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="easy"/>
+            <xs:enumeration value="hard"/>
+             <xs:enumeration value="commercial"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="ProcedureRequirement">
+        <xs:restriction base="xs:string">
+		    <xs:enumeration value="NotAdvised"/>
+            <xs:enumeration value="recommended"/>
+            <xs:enumeration value="required"/>
+			<xs:enumeration value="mandatory"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="procedureHeader">
+        <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="description" use="required"/>
+        <xs:attribute name="level" use="required" type="procedureLevel"/>
+        <xs:attribute name="frequency" type="xs:integer"/>
+		<xs:attribute name="requirement" type="ProcedureRequirement" default="recommended"/>
+		<xs:attribute name="reason" type="xs:string" use="required"/>
+		<xs:attribute name="UBUCTraining" type="xs:string"/>
+		<xs:attribute name="title" type="xs:string"/>
+		<xs:attribute name="effort" type="xs:decimal" use="optional"/>
+		<!--xs:attribute name="BudgetEstimate" type="xs:integer"/-->
+    </xs:complexType>
+    
+    <xs:complexType name="procedureType">
+        <xs:complexContent>
+            <xs:extension base="procedureHeader">
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                    <xs:choice>
+                        <xs:element name="step" type="stepType"/>
+                        <xs:element name="refid" type="referenceLink"/>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+   <xs:complexType name="procRefType">
+        <xs:attribute name="id" use="required"/>
+   </xs:complexType>
+ <!--
+ UBUC contains things Assets which provide our members the ability
+ to do their activity.  These are the items that the manual is written to 
+ maintain
+ -->
+
+    <xs:complexType name="assetTypeAttributes">
+	    <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="img" type="xs:string" use="optional"/>
+        <xs:anyAttribute processContents="skip"/>
+    </xs:complexType>
+    
+<!--TBD check component type-->
+    <xs:complexType name="assetType">
+        <xs:complexContent>
+            <xs:extension base="assetTypeAttributes">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="component" type="assetTypeAttributes"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="itemTypeAttributes">
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="img" type="xs:string" use="optional"/>
+        <xs:anyAttribute processContents="skip"/>
+    </xs:complexType>
+	
+	<xs:complexType name="itemGroupType">
+        <xs:complexContent>
+            <xs:extension base="itemTypeAttributes">
+                <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xs:choice>
+                        <xs:element name="item" type="assetType"/>
+                        <xs:element name="procedure" type="procedureType"/>
+
+						<xs:element name="refid" type="referenceLink"/>
+
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+<!--
+The manual groups collections, these are things that are similar to each other
+a collection may contain an item or might contain another collection 
+-->
+
+
+    <xs:complexType name="collectionBase">
+        <!-- The committee officer responsible for items in this collection -->
+        <xs:attribute name="officer"/> 
+        <xs:attribute name="id"/>
+        <xs:attribute name="name"/>
+    </xs:complexType>
+
+    <xs:complexType name="collectionType">
+        <xs:complexContent>
+            <xs:extension base="collectionBase">
+			    <xs:choice>
+				    <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                       <xs:element name="collection" type="collectionType"/>
+                    </xs:sequence>
+                    <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                        <xs:choice>
+                            <xs:element name="itemgroup" type="itemGroupType"/>
+						    <xs:element name="procedure" type="procedureType"/>
+    						<xs:element name="refid" type="referenceLink"/>
+
+                        </xs:choice>
+                    </xs:sequence>
+				</xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+<!-- 
+The manual keeps references onto further information and items, procedures 
+parts reference those sources to allow readers to discover more.
+ -->
+    <xs:complexType name="refType">
+	 <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="title"/>
+        <xs:attribute name="uri" type="xs:anyURI"/>
+        <xs:attribute name="ISBN"/>
+        <xs:attribute name="location"/>
+		<xs:attribute name="img" type="xs:anyURI"/>
+    </xs:complexType>
+
+    <xs:complexType name="referenceLink">
+        <xs:attribute name="id" use="required" type="xs:IDREFS"/>
+        <xs:anyAttribute processContents="skip"/>
+    </xs:complexType>
+
+    <xs:complexType name="refLinkList">
+        <xs:sequence>
+            <xs:element name="refid" type="referenceLink"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="referencesList">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="ref" type="refType"/>
+        </xs:sequence>
+    </xs:complexType>
+ 
+ <!--
+ To effect the procedures a number of tools are required
+ -->   
+    <xs:complexType name="toolTypeAttributes">
+        <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="drive"/>
+		<xs:attribute name="nutsize"/>
+		<xs:attribute name="diameter"/>
+		<xs:attribute name="store" type="xs:boolean" use="required"/>
+ 
+    </xs:complexType>
+
+    <xs:complexType name="toolType">
+        <xs:complexContent>
+            <xs:extension base="toolTypeAttributes">
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="refid" type="referenceLink"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="toolLink">
+        <xs:attribute name="id" use="required" type="xs:IDREF"/>
+    </xs:complexType>
+    
+    <xs:complexType name="toolsList">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="tool" type="toolType"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+<!--
+Consumables are items such as oils, cleaners and other items that we keep
+and need from time to time
+-->
+
+    <xs:complexType name="consumableTypeAttributes">
+        <xs:attributeGroup ref="BasicRecord"/>
+        <xs:attribute name="type"/>
+        <xs:attribute name="store" type="xs:boolean" use="required"/>
+
+        <xs:attribute name="spare"/>
+    </xs:complexType>
+    
+
+    <xs:complexType name="consumableType">
+        <xs:complexContent>
+            <xs:extension base="consumableTypeAttributes">
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="refid" type="referenceLink"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="consumableLink">
+        <xs:attribute name="id" use="required" type="xs:IDREF"/>
+        <xs:attribute name="amount"/>
+    </xs:complexType>
+    
+    <xs:complexType name="consumablesList">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="consumable" type="consumableType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+           <!--
+ This section defines the format of the manual
+ -->   
+
+    <xs:element name="manual">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="collection" type="collectionType"/>
+                <xs:element name="parts" type="partsList"/>
+                <xs:element name="tools" type="toolsList"/>
+                <xs:element name="consumables" type="consumablesList"/>
+                <xs:element name="references" type="referencesList"/>
+
+            </xs:sequence>
+        </xs:complexType>
+
+
+<!--
+The manual contains some relationships that are enforced
+-->				
+
+        <xs:unique name="UniqueItem">
+            <xs:selector xpath=".//item"/>
+                 <xs:field xpath="@id"/>
+        </xs:unique>
+
+        <!-- Prevents duplicate parts having the same name -->
+        <!-- xs:key name="partId">
+            <xs:selector xpath="./parts/partbit"/>
+                <xs:field xpath="@id"/>
+        </xs:key -->
+
+        <!-- Ensures that references to a part are valid-->
+        <!-- xs:keyref name="partReference" refer="partId">
+            <xs:selector xpath=".//partref"/>
+                <xs:field xpath="@id"/>
+        </xs:keyref -->
+    
+        <!-- Prevents duplicate parts having the same name -->
+        <xs:key name="referenceId">
+            <xs:selector xpath="./references/ref"/>
+                <xs:field xpath="@id"/>
+        </xs:key>
+
+        <!-- Ensures that references to a part are valid-->
+        <xs:keyref name="partRef" refer="referenceId">
+            <xs:selector xpath=".//ref"/>
+                <xs:field xpath="@id"/>
+        </xs:keyref>
+
+        <!-- Prevents duplicate parts having the same name -->
+        <!--xs:key name="supplierId">
+            <xs:selector xpath="./suppliers/supplier"/>
+                <xs:field xpath="@id"/>
+        </xs:key>
+
+        <xs:keyref name="supplierRef" refer="supplierId">
+            <xs:selector xpath=".//supplierRefy"/>
+                <xs:field xpath="@id"/>
+        </xs:keyref -->						
+    </xs:element>
+    
+
+
+</xs:schema>
