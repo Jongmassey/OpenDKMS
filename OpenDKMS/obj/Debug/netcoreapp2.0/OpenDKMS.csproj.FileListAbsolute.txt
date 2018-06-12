@@ -1,0 +1,12 @@
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\bin\Debug\netcoreapp2.0\OpenDKMS.deps.json
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\bin\Debug\netcoreapp2.0\OpenDKMS.runtimeconfig.json
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\bin\Debug\netcoreapp2.0\OpenDKMS.runtimeconfig.dev.json
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\bin\Debug\netcoreapp2.0\OpenDKMS.dll
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\bin\Debug\netcoreapp2.0\OpenDKMS.pdb
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.csprojAssemblyReference.cache
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.csproj.CoreCompileInputs.cache
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.AssemblyInfoInputs.cache
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.AssemblyInfo.cs
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.dll
+C:\Users\Jonathan\Source\Repos\OpenDKMS\OpenDKMS\obj\Debug\netcoreapp2.0\OpenDKMS.pdb
